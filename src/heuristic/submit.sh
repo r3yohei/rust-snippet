@@ -1,0 +1,1 @@
+cargo compete s a --no-test

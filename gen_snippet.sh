@@ -1,0 +1,1 @@
+cargo snippet -t vscode > snippet_vscode.json
