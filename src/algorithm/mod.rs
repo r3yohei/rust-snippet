@@ -7,3 +7,4 @@ pub mod modpow;
 pub mod prime;
 pub mod run_length_encoding;
 pub mod two_pointer;
+pub mod sinkhorn_knopp;
