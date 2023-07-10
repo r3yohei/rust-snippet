@@ -31,9 +31,9 @@ fn sinkhorn_knopp(a: Vec<f64>, b: Vec<f64>, C: Vec<Vec<f64>>, lambda: f64, toler
         let next_u = a.component_div(&(&K * &v));
         let next_v = b.component_div(&(&K_t * &u));
 
-        let error = (&(&next_u - &u)).norm() + (&(&next_v - &v)).norm();
+        let error = (&next_u - &u).norm() + (&next_v - &v).norm();
         if error < tolerance {
-            eprintln!("converged");
+            eprintln!("sinkhorn-knopp is converged after {} iterations", iter);
             break;
         }
 
@@ -44,7 +44,7 @@ fn sinkhorn_knopp(a: Vec<f64>, b: Vec<f64>, C: Vec<Vec<f64>>, lambda: f64, toler
     let V = DMatrix::from_diagonal(&v);
 
     let R = U * K * V;
-    let R: Vec<Vec<f64>> = R.row_iter().map(|r| r.iter().map(|&c| c).collect()).collect();
+    let R: Vec<Vec<f64>> = R.row_iter().map(|r| r.iter().copied().collect()).collect();
     R
 }
 
