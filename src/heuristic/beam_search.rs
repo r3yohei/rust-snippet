@@ -301,7 +301,7 @@ impl Beam {
     }
 }
 
-fn beam(input: &Input) -> Vec<Operation> {
+fn beam_search(input: &Input) -> Vec<Operation> {
     let first_op = 'X'; // 最初のノードに入れる，ダミーの操作
     let mut beam = {
         let state = State::new(input);
@@ -354,7 +354,7 @@ fn beam(input: &Input) -> Vec<Operation> {
 fn main() {
     get_time();
     let input = Input::new();
-    let ans = beam(&input);
+    let ans = beam_search(&input);
 
     for &ansi in &ans {
         println!("{}", ansi);
