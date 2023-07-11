@@ -2,14 +2,27 @@ use cargo_snippet::snippet;
 use itertools::Itertools;
 use nalgebra::{DMatrix, DVector};
 
-/// N件のソースからM件のターゲットにいくらかモノを運ぶ
-/// 各ソースsiにはai個の供給があり，各ターゲットtiにはbi個の需要がある
-/// Σ(1~n)ai = Σ(1~M)biとする
-/// si->tj にモノを運ぶのに，cijの輸送コストがかかる
-/// si->tjへの輸送量xijを適切に決めて，各ターゲットの要求を満たしつつ輸送コストの和を最小化する
+/// Sinkhorn-Knoppアルゴリズム
 /// [つるさんのブログ](https://theory-and-me.hatenablog.com/entry/2021/05/09/181435)
 #[snippet("r3yohei_sinkhorn_knopp")]
 fn sinkhorn_knopp(a: Vec<f64>, b: Vec<f64>, C: Vec<Vec<f64>>, lambda: f64, tolerance: f64) -> Vec<Vec<f64>> {
+    //! N件のソースからM件のターゲットにいくらかモノを運ぶ
+    //! 各ソースsiにはai個の供給があり，各ターゲットtiにはbi個の需要がある
+    //! Σ(1~n)ai = Σ(1~M)biとする
+    //! si->tj にモノを運ぶのに，cijの輸送コストがかかる
+    //! si->tjへの輸送量xijを適切に決めて，各ターゲットの要求を満たしつつ輸送コストの和を最小化する
+    //! 
+    //! Args:
+    //!     a: ソースの供給量ベクタ
+    //!     b: ターゲットの需要量ベクタ
+    //!     C: ソースiからターゲットjへの輸送コストcijの行列
+    //!     lambda: Sinkhorn-Knoppアルゴリズムの性能をコントロールするハイパーパラメータ (>0)
+    //!             大きいほど真の値に近づくが，収束が遅くなる
+    //!             ただし，あまりに大きい値にするとexp(-λ*cij)が破綻する
+    //!     tolerance: ベクタu, vのノルムがこれより変化しなくなったら収束したとみなす
+    //! Returns:
+    //!     R: ソースiからターゲットjへの輸送量rijの行列
+
     // Cの各成分cijをexp(-λ * cij)にした行列Kを作る
     let K = DMatrix::from_row_slice(
         C.len(),
@@ -40,9 +53,11 @@ fn sinkhorn_knopp(a: Vec<f64>, b: Vec<f64>, C: Vec<Vec<f64>>, lambda: f64, toler
         u = next_u;
         v = next_v;
     }
+    // u, vを対角成分に持つ行列をそれぞれ作成
     let U = DMatrix::from_diagonal(&u);
     let V = DMatrix::from_diagonal(&v);
 
+    // U * K * Vを計算し，2次元ベクタに直しつつ返す
     let R = U * K * V;
     let R: Vec<Vec<f64>> = R.row_iter().map(|r| r.iter().copied().collect()).collect();
     R
@@ -61,13 +76,16 @@ fn test_sinkhorn_knopp() {
         vec![9.0, 3.0, 6.0, 8.0],
         vec![8.0, 7.0, 8.0, 6.0],
     ];
-
     let result = sinkhorn_knopp(a, b, C, 10.0, 0.001);
+
+    // 最適解を参考サイトからコピペ
     let opt = vec![
         vec![2.0, 0.0, 16.0, 0.0],
         vec![2.0, 20.0, 0.0, 0.0],
         vec![8.0, 0.0, 0.0, 18.0],
     ];
+    
+    // すべてで差が十分小さければOK
     for i in 0..row {
         for j in 0..col {
             assert!((result[i][j] - opt[i][j]).abs() < 0.001)
