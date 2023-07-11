@@ -100,6 +100,12 @@
       "    fn gen_bool(&mut self, prob: f64) -> bool {",
       "        self.gen_f64() < prob",
       "    }",
+      "    fn fisher_yates_shuffle<T>(&mut self, items: &mut [T]) {",
+      "        for i in (1..items.len()).rev() {",
+      "            let j = (self.next_u64() as usize) % (i + 1);",
+      "            items.swap(j, i);",
+      "        }",
+      "    }",
       "}"
     ]
   },
