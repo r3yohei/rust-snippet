@@ -546,6 +546,32 @@
       "}"
     ]
   },
+  "r3yohei_next_permutation": {
+    "prefix": "r3yohei_next_permutation",
+    "body": [
+      "/// イテレータの並びのうち，辞書順で次の並びのものがあるかどうかを判定する",
+      "/// あれば，イテレータも並び替えられる",
+      "pub fn next_permutation<T>(a: &mut [T]) -> bool",
+      "where",
+      "    T: PartialOrd,",
+      "{",
+      "    let n = a.len();",
+      "    for i in (1..n).rev() {",
+      "        if a[i - 1] < a[i] {",
+      "            let mut j = n - 1;",
+      "            while a[i - 1] >= a[j] {",
+      "                j -= 1;",
+      "            }",
+      "            a.swap(i - 1, j);",
+      "            a[i..n].reverse();",
+      "            return true;",
+      "        }",
+      "    }",
+      "    a.reverse();",
+      "    false",
+      "}"
+    ]
+  },
   "r3yohei_prim": {
     "prefix": "r3yohei_prim",
     "body": [
