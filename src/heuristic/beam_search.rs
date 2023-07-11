@@ -314,15 +314,12 @@ fn beam_search(input: &Input) -> Vec<Operation> {
     let mut set = FxHashSet::default();
     let best;
 
-    let mut iter = 0;
-
     loop {
         // ゲームが終了しているものの中で，なるべくスコアが高いものを選ぶ
         if let Some(idx) = (0..cands.len()).find(|&i| cands[i].turn == BEAM_DEPTH) {
             best = cands[idx].clone();
             break;
         }
-        iter += 1;
 
         if !first {
             // ソートのkeyの昇順･降順に注意
@@ -343,22 +340,23 @@ fn beam_search(input: &Input) -> Vec<Operation> {
         assert_ne!(cands.len(), 0);
     }
 
-    eprintln!("iter: {}", iter);
-    eprintln!("beam_score: {}", best.score);
-    let mut ret = beam.restore(best.parent);
-    ret.push(best.op);
+    // 回答を復元
+    let mut operations = beam.restore(best.parent);
+    operations.push(best.op);
 
-    ret
+    eprintln!("=== Beam Search ===");
+    eprintln!("beam_score: {}", best.score);
+    eprintln!("time: {}", get_time());
+
+    operations
 }
 
 fn main() {
     get_time();
     let input = Input::new();
-    let ans = beam_search(&input);
+    let operations = beam_search(&input);
 
-    for &ansi in &ans {
-        println!("{}", ansi);
+    for &op in &operations {
+        println!("{}", op);
     }
-
-    eprintln!("time: {}", get_time());
 }
