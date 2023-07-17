@@ -5,13 +5,19 @@ use nalgebra::{DMatrix, DVector};
 /// Sinkhorn-Knoppアルゴリズム
 /// [つるさんのブログ](https://theory-and-me.hatenablog.com/entry/2021/05/09/181435)
 #[snippet("r3yohei_sinkhorn_knopp")]
-fn sinkhorn_knopp(a: Vec<f64>, b: Vec<f64>, C: Vec<Vec<f64>>, lambda: f64, tolerance: f64) -> Vec<Vec<f64>> {
+fn sinkhorn_knopp(
+    a: Vec<f64>,
+    b: Vec<f64>,
+    C: Vec<Vec<f64>>,
+    lambda: f64,
+    tolerance: f64,
+) -> Vec<Vec<f64>> {
     //! N件のソースからM件のターゲットにいくらかモノを運ぶ
     //! 各ソースsiにはai個の供給があり，各ターゲットtiにはbi個の需要がある
     //! Σ(1~n)ai = Σ(1~M)biとする
     //! si->tj にモノを運ぶのに，cijの輸送コストがかかる
     //! si->tjへの輸送量xijを適切に決めて，各ターゲットの要求を満たしつつ輸送コストの和を最小化する
-    //! 
+    //!
     //! Args:
     //!     a: ソースの供給量ベクタ
     //!     b: ターゲットの需要量ベクタ
@@ -27,7 +33,10 @@ fn sinkhorn_knopp(a: Vec<f64>, b: Vec<f64>, C: Vec<Vec<f64>>, lambda: f64, toler
     let K = DMatrix::from_row_slice(
         C.len(),
         C[0].len(),
-        &C.iter().flatten().map(|&cij| f64::exp(-lambda * cij)).collect_vec(),
+        &C.iter()
+            .flatten()
+            .map(|&cij| f64::exp(-lambda * cij))
+            .collect_vec(),
     );
     // Kの転置を用意する
     let K_t = K.transpose();
@@ -84,7 +93,7 @@ fn test_sinkhorn_knopp() {
         vec![2.0, 20.0, 0.0, 0.0],
         vec![8.0, 0.0, 0.0, 18.0],
     ];
-    
+
     // すべてで差が十分小さければOK
     for i in 0..row {
         for j in 0..col {

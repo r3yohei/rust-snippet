@@ -64,7 +64,7 @@ impl GaussianProcessRegression {
         let test_len = x_test.shape().0;
 
         // 共分散行列の計算
-        let mut kernel_mat = self.compute_kernel_matrix(&x_train);
+        let kernel_mat = self.compute_kernel_matrix(&x_train);
 
         // y=Kxを解く
         let kernel_lu = kernel_mat.lu(); // 後で使いまわすのでLU分解の計算は1回だけにしたい
@@ -122,7 +122,7 @@ impl GaussianProcessRegression {
     // 式: ln(p(y_test|theta)) = -ln|cov_n| - y_test^t * cov_n * y_test - ln(2pi)
     fn log_likelihood(&self, y_train: &DVector<f64>, kernel_mat: DMatrix<f64>) -> f64 {
         let det = kernel_mat.determinant().max(1e-100);
-        -det.ln() - (y_train.transpose() * kernel_mat.lu().solve(&y_train).unwrap())[(0, 0)]
+        -det.ln() - (y_train.transpose() * kernel_mat.lu().solve(y_train).unwrap())[(0, 0)]
     }
     // グリッドサーチの探索範囲を決める
     fn search_ranges(&self) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
@@ -133,7 +133,7 @@ impl GaussianProcessRegression {
     }
     // グリッドサーチで最適なtheta1~3を決定する
     pub fn grid_search(&mut self) {
-        let mut x_train = DMatrix::from_row_slice(
+        let x_train = DMatrix::from_row_slice(
             self.x.len(),
             self.x[0].len(),
             &self.x.iter().flatten().copied().collect_vec(),
@@ -144,11 +144,9 @@ impl GaussianProcessRegression {
         let y_average = y_train.mean();
         y_train.add_scalar_mut(-y_average);
 
-        let train_len = self.x.len();
-
         let mut best_param = self.param;
 
-        let mut kernel_mat = self.compute_kernel_matrix(&x_train);
+        let kernel_mat = self.compute_kernel_matrix(&x_train);
 
         // 暫定の対数尤度を計算する
         // ln(p(y_test|theta)) = -ln|cov_n| - y_test^t * cov_n * y_test - ln(2pi)
