@@ -580,6 +580,23 @@
       "}"
     ]
   },
+  "r3yohei_ncr_small": {
+    "prefix": "r3yohei_ncr_small",
+    "body": [
+      "/// n <= 200くらいまでの組合せ",
+      "fn nCr_small(n: u128, r: u128) -> u128 {",
+      "    //! オーバーフローしないように，以下の工夫をする",
+      "    //! nCr = n*(n-1)*...*(n-r+1) / 1*2*...*r より，",
+      "    //! n/1 * (n-1)/2 *...* (n-r+1) / r",
+      "    let mut ncr = 1;",
+      "    for i in 1..=r {",
+      "        ncr *= n - i + 1;",
+      "        ncr /= i;",
+      "    }",
+      "    ncr",
+      "}"
+    ]
+  },
   "r3yohei_next_permutation": {
     "prefix": "r3yohei_next_permutation",
     "body": [
