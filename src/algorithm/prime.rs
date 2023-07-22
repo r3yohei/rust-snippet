@@ -5,6 +5,7 @@ use cargo_snippet::snippet;
 /// 1~√nまででnを割り切るものがあれば素数でない
 #[snippet("r3yohei_is_prime")]
 fn is_prime(n: usize) -> bool {
+    if n <= 1 {return false;}
     let rootn = (n as f64).sqrt().floor() as usize;
     for i in 2..=rootn {
         if n % i == 0 {
@@ -46,14 +47,17 @@ fn prime_factorization(mut n: usize) -> Vec<usize> {
 /// O(nloglogn)
 #[snippet("r3yohei_sieve_of_eratosthenes")]
 fn sieve_of_eratosthenes(n: usize) -> Vec<usize> {
-    let mut is_prime = vec![true; n+1];
+    if n <= 1 {return vec![];}
+    let mut sieve = vec![true; n + 1];
+    // Exceptional case for 0 and 1
+    sieve[0] = false;
+    sieve[1] = false;
     let mut prime = vec![];
-    for i in 2..(n as usize +1) {
-        if is_prime[i] {
+    for i in 2..(n + 1) {
+        if sieve[i] {
             prime.push(i);
-            // iの倍数を全て消す
-            for j in (i*2..n+1).step_by(i) {
-                is_prime[j] = false;
+            for j in (i * 2..n + 1).step_by(i) {
+                sieve[j] = false;
             }
         }
     }
@@ -64,6 +68,7 @@ fn sieve_of_eratosthenes(n: usize) -> Vec<usize> {
 /// is_prime[x]: x+Lが素数かどうか
 #[snippet("r3yohei_sieve_of_eratosthenes_from_l_to_r")]
 fn sieve_of_eratosthenes_from_l_to_r(n: usize, l: usize, r: usize) -> Vec<usize> {
+    if n <= 1 {return vec![];}
     let mut is_prime = vec![true; r-l+1];
     if l == 1 {
         is_prime[0] = false;
