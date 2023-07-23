@@ -2,7 +2,7 @@ use cargo_snippet::snippet;
 use std::collections::BinaryHeap;
 use std::cmp::Reverse;
 
-/// 無向グラフの隣接リスト表現に対するダイクストラ法
+/// 隣接リスト表現に対するダイクストラ法
 #[snippet("r3yohei_dijkstra")]
 fn dijkstra(edges: &Vec<Vec<(usize, i64)>>, s: usize) -> Vec<i64> {
     let inf = 1_000_000_000;

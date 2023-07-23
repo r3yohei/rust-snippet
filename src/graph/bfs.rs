@@ -1,7 +1,7 @@
 use cargo_snippet::snippet;
 use std::collections::VecDeque;
 
-/// 無向グラフの隣接リスト表現に対するBFS
+/// 隣接リスト表現に対するBFS
 #[snippet("r3yohei_bfs")]
 fn bfs(edges: &Vec<Vec<usize>>, s: usize) {
     let mut deque = VecDeque::new();
