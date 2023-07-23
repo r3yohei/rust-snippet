@@ -33,7 +33,7 @@ fn bfs(c: &Vec<Vec<char>>, s_x: usize, s_y: usize) {
 
 /// 二次元グリッド上で，壁にぶつかるまで動くBFS
 #[snippet("r3yohei_bfs_grid_until_wall")]
-fn bfs_until_wall(c: &Vec<Vec<char>>, s_x: usize, s_y: usize) {
+fn bfs_until_wall(c: &Vec<Vec<char>>, s_x: usize, s_y: usize) -> Vec<Vec<bool>> {
     let h = c.len();
     let w = c[0].len();
     const DIJ: [(usize, usize); 4] = [(1, 0), (0, 1), (!0, 0), (0, !0)];
@@ -60,14 +60,74 @@ fn bfs_until_wall(c: &Vec<Vec<char>>, s_x: usize, s_y: usize) {
             }
         }
     }
+    visited
+}
+
+/// 二次元グリッド上での，01BFS
+/// 例えば方向を状態に持てば壁にぶつかるまでの間好きなだけ方向転換できる
+#[snippet("r3yohei_01bfs_grid")]
+fn zero_one_bfs(c: &Vec<Vec<char>>, s_x: usize, s_y: usize) -> Vec<Vec<i64>> {
+    let h = c.len();
+    let w = c[0].len();
+    // 十字
+    // const DIJ: [(usize, usize); 4] = [(1, 0), (0, 1), (!0, 0), (0, !0)];
+    // 斜め
+    const DIJ: [(usize, usize); 4] = [(!0, !0), (!0, 1), (1, !0), (1, 1)];
+    let mut deque = VecDeque::new();
+    deque.push_back((s_x, s_y));
+    const INF: i64 = 1_000_000_000;
+    let mut dist = vec![vec![INF; w]; h];
+    dist[s_x][s_y] = 0;
+
+    while let Some((frm_x, frm_y)) = deque.pop_front() {
+        let to_cost = dist[frm_x][frm_y] + 1;
+        for &(dx, dy) in &DIJ {
+            let mut to_x = frm_x.wrapping_add(dx);
+            let mut to_y = frm_y.wrapping_add(dy);
+            // 行ける限り行く
+            while to_x < h && to_y < w && c[to_x][to_y] == '.' {
+                if to_cost < dist[to_x][to_y] {
+                    // コストを更新できるなら更新しつつそこを開始点に入れる
+                    deque.push_back((to_x, to_y));
+                    dist[to_x][to_y] = to_cost;
+                } else if to_cost > dist[to_x][to_y] {
+                    break;
+                }
+                to_x = to_x.wrapping_add(dx);
+                to_y = to_y.wrapping_add(dy);
+            }
+        }
+    }
+    dist
+}
+
+#[test]
+fn test_bfs_until_wall() {
+    let H = 6;
+    let W = 6;
+    // #:壁
+    // .:行けるところ
+    let c = vec![
+        vec!['#', '#', '#', '#', '#', '#'],
+        vec!['#', '.', '.', '.', '.', '#'],
+        vec!['#', '.', '#', '.', '.', '#'],
+        vec!['#', '.', '.', '#', '.', '#'],
+        vec!['#', '.', '.', '.', '.', '#'],
+        vec!['#', '#', '#', '#', '#', '#'],
+    ];
+    // (1, 1)開始
+    let (s_x, s_y) = (1, 1);
+    // 壁にぶつかるまで止まれない時に訪問できる頂点
+    let visited = bfs_until_wall(&c, s_x, s_y);
 
     // 例えば，触れられる点すべての個数を出すなど
     let mut ans = 0;
-    for i in 0..h {
-        for j in 0..w {
+    for i in 0..H {
+        for j in 0..W {
             if visited[i][j] {
                 ans += 1;
             }
         }
     }
+    assert_eq!(ans, 12);
 }

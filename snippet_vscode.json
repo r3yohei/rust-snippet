@@ -1,4 +1,39 @@
 {
+  "r3yohei_01bfs_grid": {
+    "prefix": "r3yohei_01bfs_grid",
+    "body": [
+      "/// 二次元グリッド上での，01BFS",
+      "/// 例えば方向を状態に持てば壁にぶつかるまでの間好きなだけ方向転換できる",
+      "fn zero_one_bfs(c: &Vec<Vec<char>>, s_x: usize, s_y: usize) -> Vec<Vec<i64>> {",
+      "    let h = c.len();",
+      "    let w = c[0].len();",
+      "    const DIJ: [(usize, usize); 4] = [(!0, !0), (!0, 1), (1, !0), (1, 1)];",
+      "    let mut deque = VecDeque::new();",
+      "    deque.push_back((s_x, s_y));",
+      "    const INF: i64 = 1_000_000_000;",
+      "    let mut dist = vec![vec![INF; w]; h];",
+      "    dist[s_x][s_y] = 0;",
+      "    while let Some((frm_x, frm_y)) = deque.pop_front() {",
+      "        let to_cost = dist[frm_x][frm_y] + 1;",
+      "        for &(dx, dy) in &DIJ {",
+      "            let mut to_x = frm_x.wrapping_add(dx);",
+      "            let mut to_y = frm_y.wrapping_add(dy);",
+      "            while to_x < h && to_y < w && c[to_x][to_y] == '.' {",
+      "                if to_cost < dist[to_x][to_y] {",
+      "                    deque.push_back((to_x, to_y));",
+      "                    dist[to_x][to_y] = to_cost;",
+      "                } else if to_cost > dist[to_x][to_y] {",
+      "                    break;",
+      "                }",
+      "                to_x = to_x.wrapping_add(dx);",
+      "                to_y = to_y.wrapping_add(dy);",
+      "            }",
+      "        }",
+      "    }",
+      "    dist",
+      "}"
+    ]
+  },
   "r3yohei_ChangeMinMax": {
     "prefix": "r3yohei_ChangeMinMax",
     "body": [
@@ -123,7 +158,7 @@
   "r3yohei_bfs": {
     "prefix": "r3yohei_bfs",
     "body": [
-      "/// 無向グラフの隣接リスト表現に対するBFS",
+      "/// 隣接リスト表現に対するBFS",
       "fn bfs(edges: &Vec<Vec<usize>>, s: usize) {",
       "    let mut deque = VecDeque::new();",
       "    deque.push_back(s);",
@@ -167,6 +202,38 @@
       "}"
     ]
   },
+  "r3yohei_bfs_grid_until_wall": {
+    "prefix": "r3yohei_bfs_grid_until_wall",
+    "body": [
+      "/// 二次元グリッド上で，壁にぶつかるまで動くBFS",
+      "fn bfs_until_wall(c: &Vec<Vec<char>>, s_x: usize, s_y: usize) -> Vec<Vec<bool>> {",
+      "    let h = c.len();",
+      "    let w = c[0].len();",
+      "    const DIJ: [(usize, usize); 4] = [(1, 0), (0, 1), (!0, 0), (0, !0)];",
+      "    let mut deque = VecDeque::new();",
+      "    let mut visited = vec![vec![false; w]; h];",
+      "    deque.push_back((s_x, s_y));",
+      "    visited[s_x][s_y] = true;",
+      "    let mut stopped = vec![vec![false; w]; h];",
+      "    while let Some((frm_x, frm_y)) = deque.pop_front() {",
+      "        for &(dx, dy) in &DIJ {",
+      "            let mut to_x = frm_x;",
+      "            let mut to_y = frm_y;",
+      "            while c[to_x.wrapping_add(dx)][to_y.wrapping_add(dy)] == '.' {",
+      "                to_x = to_x.wrapping_add(dx);",
+      "                to_y = to_y.wrapping_add(dy);",
+      "                visited[to_x][to_y] = true;",
+      "            }",
+      "            if !stopped[to_x][to_y] {",
+      "                stopped[to_x][to_y] = true;",
+      "                deque.push_back((to_x, to_y));",
+      "            }",
+      "        }",
+      "    }",
+      "    visited",
+      "}"
+    ]
+  },
   "r3yohei_change_radix": {
     "prefix": "r3yohei_change_radix",
     "body": [
@@ -192,7 +259,7 @@
   "r3yohei_dfs": {
     "prefix": "r3yohei_dfs",
     "body": [
-      "/// 無向グラフの隣接リスト表現に対するDFS",
+      "/// 隣接リスト表現に対するDFS",
       "fn dfs(crt: usize, pre: usize, edges: &Vec<Vec<usize>>, mut visited: &mut Vec<bool>) {",
       "    visited[crt] = true;",
       "    todo!(\"行きがけの処理\");",
@@ -238,7 +305,7 @@
   "r3yohei_dijkstra": {
     "prefix": "r3yohei_dijkstra",
     "body": [
-      "/// 無向グラフの隣接リスト表現に対するダイクストラ法",
+      "/// 隣接リスト表現に対するダイクストラ法",
       "fn dijkstra(edges: &Vec<Vec<(usize, i64)>>, s: usize) -> Vec<i64> {",
       "    let inf = 1_000_000_000;",
       "    let mut dist = vec![inf; edges.len()];",
