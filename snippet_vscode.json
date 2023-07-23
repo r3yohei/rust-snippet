@@ -1,4 +1,37 @@
 {
+  "r3yohei_01bfs": {
+    "prefix": "r3yohei_01bfs",
+    "body": [
+      "/// 隣接リスト表現に対する01BFS",
+      "/// 辺のコストが0or1のグラフに使用する",
+      "fn zero_one_bfs(edges: &Vec<Vec<(usize, i64)>>, s: usize) {",
+      "    //! 辺のコストが1ならdequeの右端，0なら左端を繰り返す",
+      "    //! dequeの中身の頂点の暫定最短距離が常に(1,1,2,3,4,4,..)",
+      "    //! のように，左と同じかそれ+1であるように並ぶ",
+      "    //! 暫定距離が短いものからpop_frontしたいのでこうなる",
+      "    //! ダイクストラでheapqを使うのと同じ気持ちだが，dequeなので計算量がO(V+ElogV)からO(V+E)に落ちる",
+      "    let n = edges.len();",
+      "    const INF: i64 = 1_000_000_000;",
+      "    let mut dist = vec![INF; n];",
+      "    dist[s] = 0;",
+      "    let mut deque = VecDeque::new();",
+      "    deque.push_back(s);",
+      "    while let Some(frm) = deque.pop_front() {",
+      "        for &(to, cost) in &edges[frm] {",
+      "            let d = dist[frm] + cost;",
+      "            if d < dist[to] {",
+      "                dist[to] = d;",
+      "                if cost == 1 {",
+      "                    deque.push_back(to);",
+      "                } else {",
+      "                    deque.push_front(to);",
+      "                }",
+      "            }",
+      "        }",
+      "    }",
+      "}"
+    ]
+  },
   "r3yohei_01bfs_grid": {
     "prefix": "r3yohei_01bfs_grid",
     "body": [
@@ -564,6 +597,40 @@
       "}"
     ]
   },
+  "r3yohei_lucas_theorem": {
+    "prefix": "r3yohei_lucas_theorem",
+    "body": [
+      "/// p-1C0 ~ p-1Cp-1 をDPで求める",
+      "/// comb[i][j] := iCj mod p (i >= j)",
+      "/// iCj = i-1Cj-1 + i-1Cjであることを利用",
+      "fn ncr_mod(p: usize) -> Vec<Vec<usize>> {",
+      "    let mut comb = vec![vec![0; p]; p];",
+      "    comb[0][0] = 1;",
+      "    for i in 1..p {",
+      "        comb[i][0] = 1;",
+      "        for j in (1..=i).rev() {",
+      "            comb[i][j] = (comb[i - 1][j - 1] + comb[i - 1][j]) % p;",
+      "        }",
+      "    }",
+      "    comb",
+      "}",
+      "/// リュカの定理によりnCr mod pを求める",
+      "/// O(p^2 + log_p(n))",
+      "fn ncr_lucas(mut n: usize, mut r: usize, p: usize) -> usize {",
+      "    let mut ret = 1;",
+      "    let comb = ncr_mod(p);",
+      "    while n > 0 {",
+      "        let n_next = n % p;",
+      "        let r_next = r % p;",
+      "        ret *= comb[n_next][r_next];",
+      "        ret %= p;",
+      "        n /= p;",
+      "        r /= p;",
+      "    }",
+      "    ret",
+      "}"
+    ]
+  },
   "r3yohei_meguru_bisect": {
     "prefix": "r3yohei_meguru_bisect",
     "body": [
@@ -644,6 +711,25 @@
       "        p >>= 1;",
       "    }",
       "    ret",
+      "}"
+    ]
+  },
+  "r3yohei_ncr_mod": {
+    "prefix": "r3yohei_ncr_mod",
+    "body": [
+      "/// p-1C0 ~ p-1Cp-1 をDPで求める",
+      "/// comb[i][j] := iCj mod p (i >= j)",
+      "/// iCj = i-1Cj-1 + i-1Cjであることを利用",
+      "fn ncr_mod(p: usize) -> Vec<Vec<usize>> {",
+      "    let mut comb = vec![vec![0; p]; p];",
+      "    comb[0][0] = 1;",
+      "    for i in 1..p {",
+      "        comb[i][0] = 1;",
+      "        for j in (1..=i).rev() {",
+      "            comb[i][j] = (comb[i - 1][j - 1] + comb[i - 1][j]) % p;",
+      "        }",
+      "    }",
+      "    comb",
       "}"
     ]
   },
