@@ -3,13 +3,13 @@ use cargo_snippet::snippet;
 /// while1重尺取法
 /// https://zenn.dev/luke256/articles/0d60a95fd86ffa
 #[snippet("r3yohei_TwoPointer")]
-struct TwoPointer<T> {
+struct TwoPointer {
     n: usize,
-    t: T,
+    t: Vec<i64>,
 }
 #[snippet("r3yohei_TwoPointer")]
-impl<T> TwoPointer<T> {
-    fn new(n: usize, t: T) -> Self {
+impl TwoPointer {
+    fn new(n: usize, t: Vec<i64>) -> Self {
         Self { n, t }
     }
     fn run(&mut self) {
