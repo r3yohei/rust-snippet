@@ -7,7 +7,7 @@ pub trait ChangeMinMax {
     fn chmin(&mut self, x: Self) -> bool;
     fn chmax(&mut self, x: Self) -> bool;
 }
-
+#[snippet("r3yohei_ChangeMinMax")]
 impl<T: PartialOrd> ChangeMinMax for T {
     fn chmin(&mut self, x: Self) -> bool {
         *self > x && {
