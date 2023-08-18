@@ -5,3 +5,4 @@ pub mod dfs;
 pub mod dijkstra;
 pub mod prim;
 pub mod warshall_floyd;
+pub mod min_cost_flow;
