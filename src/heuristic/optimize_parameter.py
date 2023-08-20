@@ -104,8 +104,10 @@ def objective(trial: optuna.trial.Trial):
 if __name__ == "__main__":
     # スコアの最大化か最小化かに注意
     study = optuna.create_study(
+        study_name="hoge",
         direction="maximize",
-        storage="sqlite:///hogehoge.db",
+        storage="sqlite:///hoge.db",
+        load_if_exists=True,
     )
     study.optimize(objective, n_trials=5000)
 
