@@ -67,3 +67,28 @@ impl RemovabilityChecker {
         pattern == visited
     }
 }
+
+#[test]
+fn test_removability_checker() {
+    // 3x3の場合，左上から右下にかけて色が存在するかどうかを順に2^0, 2^1,...2^9相当させる
+    // 例えば，
+    // 012
+    // 345
+    // 678
+    // として，0,1,4のセルが色がついている場合，4を削除しても0,1は連結なため
+    // rc.removability[2^0 + 2^1 + 2^4] = trueとなる
+    // [ToDo] cargo test 通らない，なぜ？
+    let rc = RemovabilityChecker::new(3);
+    // 0のセルが単独で存在
+    assert!(rc.removability[1]);
+    // 4
+    assert!(!rc.removability[16]);
+    // 0,1,4
+    assert!(rc.removability[1 + 2 + 16]);
+    // 1,4,7
+    assert!(!rc.removability[2 + 16 + 128]);
+    // 0,1,2,3,4,5
+    assert!(rc.removability[1 + 2 + 4 + 8 + 16 + 32]);
+    // 0,1,2,3,5
+    assert!(rc.removability[1 + 2 + 4 + 8 + 32]);
+}

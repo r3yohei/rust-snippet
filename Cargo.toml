@@ -10,3 +10,6 @@ cargo-snippet = "0.6.5"
 superslice = "=1.0.0"
 itertools = "=0.9.0"
 nalgebra = "=0.20.0"
+
+[profile.dev]
+opt-level = 3
