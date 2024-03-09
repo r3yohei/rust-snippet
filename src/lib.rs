@@ -1,4 +1,5 @@
 pub mod algorithm;
+pub mod data_structure;
 pub mod dp;
 pub mod graph;
 pub mod heuristic;
