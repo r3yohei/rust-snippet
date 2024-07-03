@@ -3,32 +3,43 @@ use std::collections::VecDeque;
 
 /// 二次元グリッド上のBFS
 #[snippet("r3yohei_bfs_grid")]
-fn bfs(c: &Vec<Vec<char>>, s_x: usize, s_y: usize) {
+fn bfs(c: &Vec<Vec<char>>, s_x: usize, s_y: usize) -> (Vec<Vec<i64>>, Vec<Vec<(usize, usize)>>) {
     let h = c.len();
     let w = c[0].len();
     const DIJ: [(usize, usize); 4] = [(1, 0), (0, 1), (!0, 0), (0, !0)];
     let mut deque = VecDeque::new();
-    let mut visited = vec![vec![false; w]; h];
     deque.push_back((s_x, s_y));
-    visited[s_x][s_y] = true;
+    let mut dist = vec![vec![-1; w]; h];
+    dist[s_x][s_y] = 0;
+    let mut prev = vec![vec![(!0, !0); w]; h];
 
     while let Some((crt_x, crt_y)) = deque.pop_front() {
-        // 4方向それぞれに進めるかチェック
         for i in 0..4 {
-            // 範囲外参照を防ぐ
             let to_x = crt_x.wrapping_add(DIJ[i].0);
             let to_y = crt_y.wrapping_add(DIJ[i].1);
-            if to_x < h && to_y < w {
-                // 進めるかつ未訪問なら進む
-                if c[to_x][to_y] == '.' && !visited[to_x][to_y] {
-                    // 訪問先を次の始点候補にする
-                    deque.push_back((to_x, to_y));
-                    // 訪問済みにする
-                    visited[to_x][to_y] = true;
-                }
+            if to_x < h && to_y < w && c[to_x][to_y] == '.' && dist[to_x][to_y] == -1 {
+                deque.push_back((to_x, to_y));
+                dist[to_x][to_y] = dist[crt_x][crt_y] + 1;
+                prev[to_x][to_y] = (crt_x, crt_y);
             }
         }
     }
+
+    (dist, prev)
+}
+
+/// BFS経路復元
+#[snippet("r3yohei_bfs_grid")]
+fn restore_bfs(prev: &Vec<Vec<(usize, usize)>>, t_x: usize, t_y: usize) -> Vec<(usize, usize)> {
+    let mut path = vec![];
+    let mut tt = (t_x, t_y);
+    while tt != (!0, !0) {
+        path.push(tt);
+        tt = prev[tt.0][tt.1];
+    }
+    path.reverse();
+
+    path
 }
 
 /// 二次元グリッド上で，壁にぶつかるまで動くBFS
@@ -60,6 +71,7 @@ fn bfs_until_wall(c: &Vec<Vec<char>>, s_x: usize, s_y: usize) -> Vec<Vec<bool>> 
             }
         }
     }
+
     visited
 }
 
@@ -98,6 +110,7 @@ fn zero_one_bfs(c: &Vec<Vec<char>>, s_x: usize, s_y: usize) -> Vec<Vec<i64>> {
             }
         }
     }
+
     dist
 }
 
