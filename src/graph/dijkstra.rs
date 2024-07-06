@@ -18,9 +18,9 @@ fn dijkstra(edges: &Vec<Vec<(usize, i64)>>, s: usize) -> (Vec<i64>, Vec<usize>) 
         for &(to, w) in &edges[crt] {
             // 更新したほうがいいなら更新して，優先度付きキューに入れる
             if d + w < dist[to] {
-                bh.push((Reverse(dist[to]), to));
                 dist[to] = d + w;
                 prev[to] = crt;
+                bh.push((Reverse(dist[to]), to));
             }
         }
     }

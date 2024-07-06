@@ -18,9 +18,9 @@ fn bfs(c: &Vec<Vec<char>>, s_x: usize, s_y: usize) -> (Vec<Vec<i64>>, Vec<Vec<(u
             let to_x = crt_x.wrapping_add(DIJ[i].0);
             let to_y = crt_y.wrapping_add(DIJ[i].1);
             if to_x < h && to_y < w && c[to_x][to_y] == '.' && dist[to_x][to_y] == -1 {
-                deque.push_back((to_x, to_y));
                 dist[to_x][to_y] = dist[crt_x][crt_y] + 1;
                 prev[to_x][to_y] = (crt_x, crt_y);
+                deque.push_back((to_x, to_y));
             }
         }
     }
