@@ -16,7 +16,10 @@ impl RemovabilityChecker {
             let drop_center = pattern & !(1 << ((window * window) / 2));
             removability[pattern] = Self::bfs(window, drop_center as u32);
         }
-        Self { window, removability }
+        Self {
+            window,
+            removability,
+        }
     }
     fn bfs(window: usize, pattern: u32) -> bool {
         // patternの後ろの0の数を指定しておけば，1が立っているところをスタート地点にできる
@@ -65,6 +68,19 @@ impl RemovabilityChecker {
         }
         // 全て到達可能かどうか
         pattern == visited
+    }
+    fn heuristic(window: usize, pattern: u32) -> bool {
+        // 例: 3x3マス内の中心を含むL字の検出
+        let mut set = HashSet::new();
+        for idx in 0..window * window {
+            if (pattern & (1 << idx)) != 0 {
+                set.insert(idx);
+            }
+        }
+        !(set.contains(&1) && set.contains(&3) && set.contains(&4)
+            || set.contains(&1) && set.contains(&5) && set.contains(&4)
+            || set.contains(&3) && set.contains(&7) && set.contains(&4)
+            || set.contains(&5) && set.contains(&7) && set.contains(&4))
     }
 }
 

@@ -1,1 +1,0 @@
-cargo run --release --bin hogehoge-a < testcases/a/in/00${1}.txt > testcases/a/out/00${1}.txt

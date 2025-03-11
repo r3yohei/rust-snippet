@@ -3,7 +3,7 @@ use cargo_snippet::snippet;
 /// メモ化再帰関数
 /// 例: 区間DP
 #[snippet("r3yohei_memorization_recursion")]
-pub fn memo_rec(l: usize, r: usize, a: &[i64], mut dp: &mut [Vec<Option<i64>>]) -> i64 {
+fn memo_rec(l: usize, r: usize, a: &[i64], mut dp: &mut [Vec<Option<i64>>]) -> i64 {
     // ベースケース
     if l == r {return 0;}
 
